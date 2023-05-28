@@ -35,11 +35,12 @@ print(ii)
 print(len(Test_set))
 
 c_coin = 0
-for d in Data:
-    flag = True
-    for dd in Data:
-        if np.array_equal(d, dd):
-            c_coin+=1
+for i in range(N_data):
 
-c_coin -= N_data
+    flag = True
+    for j in range(i+1, N_data):
+        if np.array_equal(Data[i][:-1], Data[j][:-1]):
+            c_coin+=1
+            print(i+2, j+2)
+
 print(c_coin)
