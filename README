@@ -1,4 +1,4 @@
-Packages needed:
-*numpy
-*pandas
-*scikit-learn
+# Packages needed:
+* numpy
+* pandas
+* scikit-learn
