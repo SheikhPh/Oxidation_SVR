@@ -1,9 +1,11 @@
+from livelossplot import PlotLossesKeras
+from tensorflow import keras
 import numpy.random
 import pandas as pd
 import numpy as np
 import random
-from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler
+
 
 FileName = 'Data ANN Oxidation del'
 Column_Names = ['Temperature', 'Nb', 'Mo', 'Cr','Al', 'Ti', 'Ta','Time', 'MC']
@@ -20,10 +22,6 @@ for i in range(N_data):
 
 
 
-#tworzenie setu testowego i trainowego
-#np.random.seed(7)
-#Dla 5: Dużo - 3, mało - 7
-#Dla 10: Max: ~.97, Min: -.5, często >.9
 Train_set = Data[np.random.choice(N_data, int(.8 * N_data), replace=False)]
 Train_set_X = np.zeros((len(Train_set), N_column - 1))
 Train_set_Y = np.zeros(len(Train_set))
@@ -51,7 +49,7 @@ for d in Data:
 
 
 
-#dopasowanie SVR
+#standar scaling from SVM
 sc_X = StandardScaler()
 sc_Y = StandardScaler()
 Train_set_X = sc_X.fit_transform(Train_set_X)
@@ -62,25 +60,7 @@ Test_set_X = sc_X.transform(Test_set_X)
 Test_set_Y = Test_set_Y.reshape(-1, 1)
 Test_set_Y = sc_Y.transform(Test_set_Y)
 
-svr = SVR(kernel='poly', degree = 10, epsilon=0.1)
-svr.fit(Train_set_X, Train_set_Y)
-pred_Y = svr.predict(Test_set_X)
-print(svr.score(Train_set_X, Train_set_Y))
-print(svr.score(Test_set_X, Test_set_Y))
 
-# for i in range(len(Test_set_X)):
-#      print(pred_Y[i], Test_set_Y[i])
 
-#zliczanie takich samych wierszy
-'''
-c_coin = 0
-for i in range(N_data):
 
-    flag = True
-    for j in range(i+1, N_data):
-        if np.array_equal(Data[i][:-1], Data[j][:-1]):
-            c_coin+=1
-            print(i+2, j+2)
 
-print(c_coin)
-'''
