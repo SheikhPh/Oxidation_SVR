@@ -3,7 +3,7 @@ from tensorflow import keras
 import numpy.random
 import pandas as pd
 import numpy as np
-
+from sklearn.model_selection import train_test_split
 
 plotlosses = PlotLossesKeras()
 FileName = 'Data ANN Oxidation del'
@@ -21,51 +21,35 @@ for i in range(N_data):
 
 
 
-Train_set = Data[np.random.choice(N_data, int(.8 * N_data), replace=False)]
+Train_set, Test_set = train_test_split(Data, train_size=0.8)
 layer= keras.layers.Normalization()
 layer.adapt(Train_set)
 Train_set = layer(Train_set)
+Test_set = layer(Test_set)
 
 
 Train_set_X = np.zeros((len(Train_set), N_column - 1))
 Train_set_Y = np.zeros(len(Train_set))
-print(len(Train_set))
 for i in range(len(Train_set)):
     Train_set_X[i] = Train_set[i][:-1]
     Train_set_Y[i] = Train_set[i][-1]
 
 
-Test_set = np.zeros((0, N_column))
-
-ii = 0
-for d in Data:
-    flag = True
-    for t in Train_set:
-        if np.array_equal(d,t):
-            flag = False
-            break
-    if flag:
-        Test_set = np.vstack([Test_set, d])
-
 Test_set_X = np.zeros((len(Test_set), N_column - 1))
 Test_set_Y = np.zeros(len(Test_set))
-Test_set = layer(Test_set)
 for i in range(len(Test_set)):
     Test_set_X[i] = Test_set[i][:-1]
     Test_set_Y[i] = Test_set[i][-1]
 
+
 model = keras.Sequential()
-model.add(keras.layers.Dense(100, activation='relu', input_shape=[N_column-1]))
-model.add(keras.layers.Dense(100, activation='relu'))
-model.add(keras.layers.Dense(1, activation='sigmoid'))
+model.add(keras.layers.Dense(32, activation='relu', input_shape=(8,)))
+model.add(keras.layers.Dense(16, activation='relu'))
+model.add(keras.layers.Dense(1, activation='linear'))
 
-#50, 50, 10, 1 - .56
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse'])
 
-model.compile(
-    loss='MeanSquaredError',
-    optimizer=keras.optimizers.Adam())
 model.summary()
 model.fit(Train_set_X, Train_set_Y, epochs=250, batch_size=16)
 
-
-#standar scaling from SVM
+model.evaluate(x=Test_set_X, y = Test_set_Y)
