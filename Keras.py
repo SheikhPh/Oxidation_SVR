@@ -50,17 +50,6 @@ for d in Data:
 
 
 #standar scaling from SVM
-sc_X = StandardScaler()
-sc_Y = StandardScaler()
-Train_set_X = sc_X.fit_transform(Train_set_X)
-Train_set_Y = Train_set_Y.reshape(-1, 1)
-Train_set_Y = sc_Y.fit_transform(Train_set_Y)
-
-Test_set_X = sc_X.transform(Test_set_X)
-Test_set_Y = Test_set_Y.reshape(-1, 1)
-Test_set_Y = sc_Y.transform(Test_set_Y)
-
-
 
 
 
