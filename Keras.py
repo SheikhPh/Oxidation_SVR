@@ -22,6 +22,11 @@ for i in range(N_data):
 
 
 Train_set = Data[np.random.choice(N_data, int(.8 * N_data), replace=False)]
+layer= keras.layers.Normalization()
+layer.adapt(Train_set)
+Train_set = layer(Train_set)
+
+
 Train_set_X = np.zeros((len(Train_set), N_column - 1))
 Train_set_Y = np.zeros(len(Train_set))
 print(len(Train_set))
@@ -31,8 +36,7 @@ for i in range(len(Train_set)):
 
 
 Test_set = np.zeros((0, N_column))
-Test_set_X = np.zeros((0, N_column - 1))
-Test_set_Y = np.zeros(0)
+
 ii = 0
 for d in Data:
     flag = True
@@ -42,26 +46,26 @@ for d in Data:
             break
     if flag:
         Test_set = np.vstack([Test_set, d])
-        #Test_set = np.append(Test_set, [d], axis=0)
-        Test_set_X = np.vstack([Test_set_X, d[:-1]])
-        Test_set_Y = np.append(Test_set_Y, d[-1])
-#Normalization
-layer_X = keras.layers.Normalization()
-layer_X.adapt(Train_set_X)
-Train_set_X = layer_X(Train_set_X)
 
-layer_X = keras.layers.Normalization()
-layer_X.adapt(Train_set_X)
-Train_set_X = layer_X(Train_set_X)
+Test_set_X = np.zeros((len(Test_set), N_column - 1))
+Test_set_Y = np.zeros(len(Test_set))
+Test_set = layer(Test_set)
+for i in range(len(Test_set)):
+    Test_set_X[i] = Test_set[i][:-1]
+    Test_set_Y[i] = Test_set[i][-1]
 
 model = keras.Sequential()
-model.add(keras.layers.Dense(2, activation='leaky_relu', input_shape=[N_column-1]))
-model.add(keras.layers.Dense(2, activation='leaky_relu'))
+model.add(keras.layers.Dense(100, activation='relu', input_shape=[N_column-1]))
+model.add(keras.layers.Dense(100, activation='relu'))
 model.add(keras.layers.Dense(1, activation='sigmoid'))
 
-model.compile(loss='mse', optimizer=keras.optimizers.Adam(learning_rate=0.2), metrics=['accuracy'])
+#50, 50, 10, 1 - .56
+
+model.compile(
+    loss='MeanSquaredError',
+    optimizer=keras.optimizers.Adam())
 model.summary()
+model.fit(Train_set_X, Train_set_Y, epochs=250, batch_size=16)
+
+
 #standar scaling from SVM
-
-
-
