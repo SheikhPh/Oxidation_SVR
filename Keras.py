@@ -3,10 +3,9 @@ from tensorflow import keras
 import numpy.random
 import pandas as pd
 import numpy as np
-import random
-from sklearn.preprocessing import StandardScaler
 
 
+plotlosses = PlotLossesKeras()
 FileName = 'Data ANN Oxidation del'
 Column_Names = ['Temperature', 'Nb', 'Mo', 'Cr','Al', 'Ti', 'Ta','Time', 'MC']
 df = pd.read_excel(FileName + '.xlsx', sheet_name=0)
@@ -46,9 +45,22 @@ for d in Data:
         #Test_set = np.append(Test_set, [d], axis=0)
         Test_set_X = np.vstack([Test_set_X, d[:-1]])
         Test_set_Y = np.append(Test_set_Y, d[-1])
+#Normalization
+layer_X = keras.layers.Normalization()
+layer_X.adapt(Train_set_X)
+Train_set_X = layer_X(Train_set_X)
 
+layer_X = keras.layers.Normalization()
+layer_X.adapt(Train_set_X)
+Train_set_X = layer_X(Train_set_X)
 
+model = keras.Sequential()
+model.add(keras.layers.Dense(2, activation='leaky_relu', input_shape=[N_column-1]))
+model.add(keras.layers.Dense(2, activation='leaky_relu'))
+model.add(keras.layers.Dense(1, activation='sigmoid'))
 
+model.compile(loss='mse', optimizer=keras.optimizers.Adam(learning_rate=0.2), metrics=['accuracy'])
+model.summary()
 #standar scaling from SVM
 
 

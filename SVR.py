@@ -63,7 +63,7 @@ for deg in degrees:
 
 
 
-        #dopasowanie SVR
+        #SVR fitting
         sc_X = StandardScaler()
         sc_Y = StandardScaler()
         Train_set_X = sc_X.fit_transform(Train_set_X)
